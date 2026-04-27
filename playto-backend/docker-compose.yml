@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+
+  web:
+    build: .
+    container_name: django_app
+    command: gunicorn payout_engine.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A payout_engine worker -l info
+    depends_on:
+      - redis
+      - web
+    env_file:
+      - .env
+
+  beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A payout_engine beat -l info
+    depends_on:
+      - redis
+      - web
+    env_file:
+      - .env
