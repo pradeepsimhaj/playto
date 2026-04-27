@@ -38,6 +38,8 @@ ALLOWED_HOSTS = ['*']
 
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
+    "content-type",
+    "authorization",
     "idempotency-key",
 ]
 
@@ -72,7 +74,8 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
+    os.getenv("Backend_Url"),
+    'http://localhost:5743',
 ]
 
 ROOT_URLCONF = 'payout_engine.urls'
