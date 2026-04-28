@@ -77,6 +77,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     # os.getenv("Backend_Url"),
     'http://localhost:5743',
+    'https://playto-two.vercel.app/payouts'
 ]
 
 ROOT_URLCONF = 'payout_engine.urls'
