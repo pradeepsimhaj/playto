@@ -229,10 +229,25 @@ class LedgerRepairView(APIView):
         })
     
 
+
 class RetryPayoutView(APIView):
     def post(self, request, payout_id):
         from core.tasks import process_payout
 
-        process_payout.delay(payout_id)
+        try:
+            payout = Payout.objects.get(id=payout_id)
 
-        return Response({"message": "Retry triggered"})
+            # 🔥 Reset payout for retry
+            payout.status = "PENDING"
+            payout.save()
+
+            process_payout.delay(str(payout.id))
+
+            return Response({
+                "message": "Retry started",
+                "id": str(payout.id),
+                "status": payout.status
+            }, status=200)
+
+        except Payout.DoesNotExist:
+            return Response({"error": "Payout not found"}, status=404)

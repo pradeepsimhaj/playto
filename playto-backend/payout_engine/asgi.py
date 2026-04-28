@@ -12,12 +12,13 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 from core.routing import websocket_urlpatterns
 from channels.auth import AuthMiddlewareStack
+import core.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'payout_engine.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
-        URLRouter(websocket_urlpatterns)
+        URLRouter(core.routing.websocket_urlpatterns)
     ),
 })

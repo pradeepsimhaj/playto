@@ -60,6 +60,10 @@ useSocket((data) => {
   if (data.type === "PAYOUT_UPDATE") {
     fetchPayouts();
 
+    if (data.status === "PROCESSING") {
+  setAlert({ type: "info", message: "Processing..." });
+}
+
     if (data.status === "FAILED") {
       setAlert({ type: "error", message: "Payout Failed ❌" });
     }
@@ -122,9 +126,28 @@ useSocket((data) => {
     setLoading(false);
   };
 
+  const retryPayout = async (id) => {
+  try {
+    const res = await API.post(`/payouts/retry/${id}`);
+
+    setAlert({
+      type: "info",
+      message: "Retry started..."
+    });
+
+    fetchPayouts();
+  } catch (err) {
+    setAlert({
+      type: "error",
+      message: "Retry failed ❌"
+    });
+  }
+};
+
   const filtered = payouts.filter((p) =>
     p.id.toLowerCase().includes(search.toLowerCase())
   );
+
 
   return (
     <div className="p-6">
@@ -243,8 +266,11 @@ useSocket((data) => {
                   </span>
                   {p.status === "FAILED" && (
   <button
-    onClick={() => API.post(`/payouts/retry/${p.id}`)}
-    className="text-blue-500 ml-2"
+    onClick={(e) => {
+  e.stopPropagation();
+  retryPayout(p.id);
+}}
+    className="bg-blue-500 text-white px-5 py-2 rounded-lg ml-10"
   >
     Retry
   </button>

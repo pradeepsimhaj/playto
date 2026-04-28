@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "core",
     "django_celery_beat",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    os.getenv("Backend_Url"),
+    # os.getenv("Backend_Url"),
     'http://localhost:5743',
 ]
 
@@ -86,7 +87,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [os.environ.get("REDIS_URL"),("redis", 6379)],
         },
     },
 }

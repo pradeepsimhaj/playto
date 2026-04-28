@@ -19,5 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
+RUN python manage.py collectstatic --noinput || true
+
 # Default command
-CMD ["gunicorn", "payout_engine.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "payout_engine.asgi:application"]

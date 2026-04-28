@@ -1,17 +1,18 @@
 import { useEffect } from "react";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-
 export default function useSocket(onMessage) {
   useEffect(() => {
-    const socket = new WebSocket(backendUrl + "/payouts/");
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/payouts/");
 
-    socket.onmessage = (event) => {
+    ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       onMessage(data);
     };
 
-    return () => socket.close();
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
+    };
+
+    return () => ws.close();
   }, []);
 }
