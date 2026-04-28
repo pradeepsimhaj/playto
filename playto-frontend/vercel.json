@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "http://payout-django-123.centralindia.azurecontainer.io/api/v1/:path*"
+    }
+  ]
+}
